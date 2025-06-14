@@ -16,7 +16,7 @@ struct ContentView: View {
         NavigationView {
             List {
                 ForEach(reminders) { rem in
-                    NavigationLink(destination: EditReminderView(reminder: rem)) {
+                    NavigationLink(destination: ReminderDetailView(reminder: rem)) {
                         HStack {
                             VStack(alignment: .leading) {
                                 Text(rem.title ?? "No Title")
