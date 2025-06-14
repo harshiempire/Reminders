@@ -2,29 +2,19 @@ import SwiftUI
 import CoreData
 import UserNotifications
 
+// This view demonstrates the modern SwiftUI + Core Data + UserNotifications flow:
+//  - When a reminder is saved, Core Data persists it
+//  - NotificationScheduler ensures the notification is scheduled
+//  - Consistent with edit and snooze flows elsewhere in the app
+
 struct AddReminderView: View {
-    @Environment(\ .managedObjectContext) private var viewContext
-    @Environment(\ .presentationMode) private var presentationMode
+    @Environment(\.managedObjectContext) private var viewContext
+    @Environment(\.presentationMode) private var presentationMode
 
     @State private var title: String = ""
     @State private var note: String = ""
     @State private var dateTime: Date = Date()
     @State private var recurrenceSelection: Recurrence = .none
-
-    enum Recurrence: String, CaseIterable, Identifiable {
-        case none = "None"
-        case daily = "Daily"
-        case weekly = "Weekly"
-
-        var id: String { rawValue }
-        var rrule: String? {
-            switch self {
-            case .none: return nil
-            case .daily: return "FREQ=DAILY;INTERVAL=1"
-            case .weekly: return "FREQ=WEEKLY;INTERVAL=1"
-            }
-        }
-    }
 
     var body: some View {
         NavigationView {
@@ -57,6 +47,7 @@ struct AddReminderView: View {
     }
 
     private func saveReminder() {
+        // 1. Create and save reminder in Core Data
         let rem = Reminder(context: viewContext)
         rem.id = UUID()
         rem.title = title
@@ -68,27 +59,11 @@ struct AddReminderView: View {
 
         do {
             try viewContext.save()
-            scheduleNotification(for: rem)
+            NotificationScheduler.schedule(rem)
             presentationMode.wrappedValue.dismiss()
         } catch {
             print("Error saving reminder:", error)
         }
     }
 
-    private func scheduleNotification(for rem: Reminder) {
-        let content = UNMutableNotificationContent()
-        content.title = rem.title ?? ""
-        content.body = rem.note ?? ""
-        content.sound = .default
-
-        let comps = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: rem.dateTime!)
-        let trigger = UNCalendarNotificationTrigger(dateMatching: comps, repeats: rem.recurrenceRule != nil)
-
-        let request = UNNotificationRequest(identifier: rem.id!.uuidString, content: content, trigger: trigger)
-        UNUserNotificationCenter.current().add(request) { error in
-            if let err = error {
-                print("Notification scheduling error:", err)
-            }
-        }
-    }
 }

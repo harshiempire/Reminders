@@ -3,9 +3,11 @@ import CoreData
 
 struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
+
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Reminder.dateTime, ascending: true)],
-        animation: .default)
+        animation: .default
+    )
     private var reminders: FetchedResults<Reminder>
 
     @State private var showingAdd = false
@@ -14,20 +16,22 @@ struct ContentView: View {
         NavigationView {
             List {
                 ForEach(reminders) { rem in
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(rem.title ?? "No Title")
-                                .font(.headline)
-                            if let note = rem.note, !note.isEmpty {
-                                Text(note)
-                                    .font(.subheadline)
+                    NavigationLink(destination: ReminderDetailView(reminder: rem)) {
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text(rem.title ?? "No Title")
+                                    .font(.headline)
+                                if let note = rem.note, !note.isEmpty {
+                                    Text(note)
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            Spacer()
+                            if let date = rem.dateTime {
+                                Text(date, style: .time)
                                     .foregroundColor(.secondary)
                             }
-                        }
-                        Spacer()
-                        if let date = rem.dateTime {
-                            Text(date, style: .time)
-                                .foregroundColor(.secondary)
                         }
                     }
                 }
@@ -48,8 +52,11 @@ struct ContentView: View {
         }
     }
 
-    private func deleteReminders(offsets: IndexSet) {
-        offsets.map { reminders[$0] }.forEach(viewContext.delete)
+    private func deleteReminders(at offsets: IndexSet) {
+        offsets.map { reminders[$0] }.forEach { rem in
+            NotificationScheduler.cancel(rem)
+            viewContext.delete(rem)
+        }
         saveContext()
     }
 
@@ -57,7 +64,13 @@ struct ContentView: View {
         do {
             try viewContext.save()
         } catch {
-            print("Error saving context:", error)
+            print("Error saving context:\(error)")
         }
     }
+}
+
+#Preview {
+    ContentView()
+        .environment(\.managedObjectContext,
+                     PersistenceController.shared.container.viewContext)
 }
