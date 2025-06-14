@@ -10,13 +10,15 @@ struct RemindersApp: App {
 
   init() {
     // 3️⃣ Ask for permission
-    UNUserNotificationCenter
-      .current()
-      .requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-        if let err = error { print("Notif auth error:", err) }
-      }
-    // Note: our NotificationDelegate’s init() has already set
-    // UNUserNotificationCenter.current().delegate = notificationDelegate
+    _ = notificationDelegate
+      UNUserNotificationCenter.current()
+             .requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+                 if let error = error {
+                     print("Notification permission error: \(error.localizedDescription)")
+                 } else {
+                     print("Notification permission granted: \(granted)")
+                 }
+             }
   }
 
   var body: some Scene {

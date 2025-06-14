@@ -1,9 +1,15 @@
 import SwiftUI
 import CoreData
+import UserNotifications
+
+// This view demonstrates the modern SwiftUI + Core Data + UserNotifications flow:
+//  - When a reminder is saved, Core Data persists it
+//  - NotificationScheduler ensures the notification is scheduled
+//  - Consistent with edit and snooze flows elsewhere in the app
 
 struct AddReminderView: View {
-    @Environment(\.managedObjectContext) private var viewContext
-    @Environment(\.presentationMode) private var presentationMode
+    @Environment(\ .managedObjectContext) private var viewContext
+    @Environment(\ .presentationMode) private var presentationMode
 
     @State private var title: String = ""
     @State private var note: String = ""
@@ -41,6 +47,7 @@ struct AddReminderView: View {
     }
 
     private func saveReminder() {
+        // 1. Create and save reminder in Core Data
         let rem = Reminder(context: viewContext)
         rem.id = UUID()
         rem.title = title
