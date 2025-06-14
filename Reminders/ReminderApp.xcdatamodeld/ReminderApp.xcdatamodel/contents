@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788.4" systemVersion="24F74" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="SnoozeRecord" representedClassName=".SnoozeRecord" syncable="YES" codeGenerationType="class">
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="timestamp" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="reminder" optional="YES" deletionRule="Nullify" destinationEntity="Reminder" inverseName="snoozeRecords" inverseEntity="Reminder"/>
+    </entity>
     <entity name="Reminder" representedClassName=".Reminder" syncable="YES" codeGenerationType="class">
         <attribute name="dateTime" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
@@ -8,5 +13,6 @@
         <attribute name="recurrenceRule" optional="YES" attributeType="String"/>
         <attribute name="snoozeCount" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="title" attributeType="String"/>
+        <relationship name="snoozeRecords" toMany="YES" deletionRule="Cascade" destinationEntity="SnoozeRecord" inverseName="reminder" inverseEntity="SnoozeRecord"/>
     </entity>
 </model>

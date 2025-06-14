@@ -14,20 +14,22 @@ struct ContentView: View {
         NavigationView {
             List {
                 ForEach(reminders) { rem in
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(rem.title ?? "No Title")
-                                .font(.headline)
-                            if let note = rem.note, !note.isEmpty {
-                                Text(note)
-                                    .font(.subheadline)
+                    NavigationLink(destination: ReminderDetailView(reminder: rem)) {
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text(rem.title ?? "No Title")
+                                    .font(.headline)
+                                if let note = rem.note, !note.isEmpty {
+                                    Text(note)
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            Spacer()
+                            if let date = rem.dateTime {
+                                Text(date, style: .time)
                                     .foregroundColor(.secondary)
                             }
-                        }
-                        Spacer()
-                        if let date = rem.dateTime {
-                            Text(date, style: .time)
-                                .foregroundColor(.secondary)
                         }
                     }
                 }

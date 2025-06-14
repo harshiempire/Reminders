@@ -1,30 +1,14 @@
 import SwiftUI
 import CoreData
-import UserNotifications
 
 struct AddReminderView: View {
-    @Environment(\ .managedObjectContext) private var viewContext
-    @Environment(\ .presentationMode) private var presentationMode
+    @Environment(\.managedObjectContext) private var viewContext
+    @Environment(\.presentationMode) private var presentationMode
 
     @State private var title: String = ""
     @State private var note: String = ""
     @State private var dateTime: Date = Date()
     @State private var recurrenceSelection: Recurrence = .none
-
-    enum Recurrence: String, CaseIterable, Identifiable {
-        case none = "None"
-        case daily = "Daily"
-        case weekly = "Weekly"
-
-        var id: String { rawValue }
-        var rrule: String? {
-            switch self {
-            case .none: return nil
-            case .daily: return "FREQ=DAILY;INTERVAL=1"
-            case .weekly: return "FREQ=WEEKLY;INTERVAL=1"
-            }
-        }
-    }
 
     var body: some View {
         NavigationView {
@@ -68,27 +52,11 @@ struct AddReminderView: View {
 
         do {
             try viewContext.save()
-            scheduleNotification(for: rem)
+            NotificationScheduler.schedule(rem)
             presentationMode.wrappedValue.dismiss()
         } catch {
             print("Error saving reminder:", error)
         }
     }
 
-    private func scheduleNotification(for rem: Reminder) {
-        let content = UNMutableNotificationContent()
-        content.title = rem.title ?? ""
-        content.body = rem.note ?? ""
-        content.sound = .default
-
-        let comps = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: rem.dateTime!)
-        let trigger = UNCalendarNotificationTrigger(dateMatching: comps, repeats: rem.recurrenceRule != nil)
-
-        let request = UNNotificationRequest(identifier: rem.id!.uuidString, content: content, trigger: trigger)
-        UNUserNotificationCenter.current().add(request) { error in
-            if let err = error {
-                print("Notification scheduling error:", err)
-            }
-        }
-    }
 }
