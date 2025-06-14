@@ -1,6 +1,8 @@
 import SwiftUI
 import CoreData
 
+import UserNotifications
+
 /// View for editing an existing reminder.
 struct EditReminderView: View {
     @Environment(\.managedObjectContext) private var viewContext
