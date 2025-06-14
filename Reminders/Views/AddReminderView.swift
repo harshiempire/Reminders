@@ -1,10 +1,9 @@
 import SwiftUI
 import CoreData
-import UserNotifications
 
 struct AddReminderView: View {
-    @Environment(\ .managedObjectContext) private var viewContext
-    @Environment(\ .presentationMode) private var presentationMode
+    @Environment(\.managedObjectContext) private var viewContext
+    @Environment(\.presentationMode) private var presentationMode
 
     @State private var title: String = ""
     @State private var note: String = ""
