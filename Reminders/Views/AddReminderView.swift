@@ -8,8 +8,8 @@ import UserNotifications
 //  - Consistent with edit and snooze flows elsewhere in the app
 
 struct AddReminderView: View {
-    @Environment(\ .managedObjectContext) private var viewContext
-    @Environment(\ .presentationMode) private var presentationMode
+    @Environment(\.managedObjectContext) private var viewContext
+    @Environment(\.presentationMode) private var presentationMode
 
     @State private var title: String = ""
     @State private var note: String = ""
