@@ -16,21 +16,6 @@ struct AddReminderView: View {
     @State private var dateTime: Date = Date()
     @State private var recurrenceSelection: Recurrence = .none
 
-    enum Recurrence: String, CaseIterable, Identifiable {
-        case none = "None"
-        case daily = "Daily"
-        case weekly = "Weekly"
-
-        var id: String { rawValue }
-        var rrule: String? {
-            switch self {
-            case .none: return nil
-            case .daily: return "FREQ=DAILY;INTERVAL=1"
-            case .weekly: return "FREQ=WEEKLY;INTERVAL=1"
-            }
-        }
-    }
-
     var body: some View {
         NavigationView {
             Form {
@@ -74,11 +59,11 @@ struct AddReminderView: View {
 
         do {
             try viewContext.save()
-            // 2. Schedule notification for this reminder
             NotificationScheduler.schedule(rem)
             presentationMode.wrappedValue.dismiss()
         } catch {
             print("Error saving reminder:", error)
         }
     }
+
 }

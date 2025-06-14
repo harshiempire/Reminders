@@ -13,59 +13,29 @@ struct ContentView: View {
     @State private var showingAdd = false
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                // Use .glassBackground() if available, otherwise fallback to .ultraThinMaterial
-                List {
-                    ForEach(reminders) { rem in
-                        NavigationLink(destination: ReminderDetailView(reminder: rem)) {
-                            HStack {
-                                VStack(alignment: .leading) {
-                                    Text(rem.title ?? "No Title")
-                                        .font(.headline)
-                                    if let note = rem.note, !note.isEmpty {
-                                        Text(note)
-                                            .font(.subheadline)
-                                            .foregroundColor(.secondary)
-                                    }
-                                }
-                                Spacer()
-                                if let date = rem.dateTime {
-                                    Text(date, style: .time)
+        NavigationView {
+            List {
+                ForEach(reminders) { rem in
+                    NavigationLink(destination: EditReminderView(reminder: rem)) {
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text(rem.title ?? "No Title")
+                                    .font(.headline)
+                                if let note = rem.note, !note.isEmpty {
+                                    Text(note)
+                                        .font(.subheadline)
                                         .foregroundColor(.secondary)
                                 }
                             }
-                            .padding()
-                            .background(.ultraThinMaterial)
-                            .cornerRadius(12)
-                            .padding(.vertical, 4)
-                        }
-                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                            Button {
-                                // snooze 10m:
-                                rem.snoozeCount += 1
-                                rem.dateTime = Date().addingTimeInterval(600)
-                                try? viewContext.save()
-                                NotificationScheduler.cancel(rem)
-                                NotificationScheduler.schedule(rem)
-                            } label: {
-                                Label("Snooze", systemImage: "bell.slash")
-                            }
-                            .tint(.orange)
-
-                            Button(role: .destructive) {
-                                NotificationScheduler.cancel(rem)
-                                viewContext.delete(rem)
-                                try? viewContext.save()
-                            } label: {
-                                Label("Done", systemImage: "checkmark.circle")
+                            Spacer()
+                            if let date = rem.dateTime {
+                                Text(date, style: .time)
+                                    .foregroundColor(.secondary)
                             }
                         }
                     }
-                    .onDelete(perform: deleteReminders)
                 }
-                .listStyle(.plain)
-                .background(.ultraThinMaterial)
+                .onDelete(perform: deleteReminders)
             }
             .navigationTitle("Reminders")
             .toolbar {
