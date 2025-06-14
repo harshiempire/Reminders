@@ -87,32 +87,4 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
 
         completion()
     }
-
-    private func saveAndReschedule(_ rem: Reminder) {
-        do {
-            try viewContext.save()
-            let content = UNMutableNotificationContent()
-            content.title = rem.title ?? ""
-            content.body = rem.note ?? ""
-            content.sound = .default
-            content.categoryIdentifier = "REMINDER_CATEGORY"
-
-            let comps = Calendar.current.dateComponents(
-                [.year, .month, .day, .hour, .minute],
-                from: rem.dateTime!
-            )
-            let trigger = UNCalendarNotificationTrigger(
-                dateMatching: comps,
-                repeats: rem.recurrenceRule != nil
-            )
-            let request = UNNotificationRequest(
-                identifier: rem.id!.uuidString,
-                content: content,
-                trigger: trigger
-            )
-            UNUserNotificationCenter.current().add(request)
-        } catch {
-            print("Error snoozing:", error)
-        }
-    }
 }
