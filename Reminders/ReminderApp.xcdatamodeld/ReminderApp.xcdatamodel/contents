@@ -15,12 +15,14 @@
         <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="reminder" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Reminder" inverseName="snoozeRecords" inverseEntity="Reminder"/>
     </entity>
+
     <entity name="Person" representedClassName="Person" syncable="YES" codeGenerationType="manual">
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="name" attributeType="String"/>
         <attribute name="lastContactedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="notes" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MemoryNote" inverseName="person" inverseEntity="MemoryNote"/>
     </entity>
+
     <entity name="MemoryNote" representedClassName="MemoryNote" syncable="YES" codeGenerationType="manual">
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="text" optional="YES" attributeType="String"/>
